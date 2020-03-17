@@ -97,8 +97,8 @@ int		ft_get_philo_infos(int argc, char **argv, t_philo_infos *p_infos)
 	else
 		p_infos->nb_time_eat = 0;
 	p_infos->nb_philo_finished = 0;
-	p_infos->starting_time = ft_get_current_time();
+	if ((p_infos->starting_time = ft_get_current_time()) == -1)
+		return (-1);
 	p_infos->end = 0;
-	p_infos->dead_philo = -1;
 	return (0);
 }

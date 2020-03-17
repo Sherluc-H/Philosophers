@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra
 RM = rm -f
 NAME = philo_one
 SRCS = philo_one.c \
@@ -7,7 +7,7 @@ SRCS = philo_one.c \
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 all: $(NAME)
 

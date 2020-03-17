@@ -23,17 +23,7 @@ typedef struct	s_philo_infos
 	int		nb_philo_finished;
 	long	starting_time;
 	int		end;
-	int		dead_philo;
 }				t_philo_infos;
-
-typedef enum	e_state
-{
-	EATING = 1,
-	SLEEPING,
-	THINKING,
-	TAKE,
-	DEAD
-}				t_state;
 
 int				ft_simple_atoi(char *str);
 void			ft_add_nbr_to_str(long nb, char *tab, int *i);
