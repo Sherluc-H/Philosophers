@@ -1,6 +1,20 @@
 #include <stdlib.h>
 #include "ft_free.h"
 
+int  ft_unlock_mutex(pthread_mutex_t *mutex_one,
+    pthread_mutex_t *mutex_two, int ret)
+{
+    if (mutex_one)
+    {
+        pthread_mutex_unlock(mutex_one);
+    }
+    if (mutex_two)
+    {
+        pthread_mutex_unlock(mutex_two);
+    }
+    return (ret);
+}
+
 int  ft_free_mutex(pthread_mutex_t *m_forks, pthread_mutex_t *m_write,
     int nb_init, int ret)
 {
