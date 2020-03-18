@@ -4,6 +4,7 @@
 #include "philo_one.h"
 #include "ft_philo_utils.h"
 #include "ft_run_threads.h"
+#include "ft_free.h"
 
 static int  ft_check_args(int argc, char **argv, t_philo_infos *p_infos)
 {
@@ -40,7 +41,7 @@ static int  ft_prepare_infos(t_philo_infos *p_infos, t_philo_status *p_status,
         p_status[i].m_forks = m_forks;
         p_status[i].m_write = m_write;
         if ((ret = pthread_mutex_init(&(p_status[i].m_forks[i]), NULL)) != 0)
-            return (ret);
+            return (ft_free_mutex(m_forks, m_write, i, ret));
         i++;
     }
     return (0);
@@ -74,35 +75,6 @@ static int ft_create_threads(t_philo_infos *p_infos, t_philo_status *p_status)
     return (0);
 }
 
-static int  ft_free_all(int nb_philo, t_philo_status *p_status,
-    pthread_mutex_t *m_forks, pthread_mutex_t *m_write)
-{
-    int i;
-    int ret;
-
-    i = 0;
-    ret = 0;
-    if ((ret = pthread_mutex_destroy(m_write)))
-    {
-        free(p_status);
-        free(m_forks);
-        return (ret);
-    }
-    while (i < nb_philo)
-    {
-        if ((ret = pthread_mutex_destroy(&(m_forks[i]))))
-        {
-            free(p_status);
-            free(m_forks);
-            return (ret);
-        }
-        i++;
-    }
-    free(p_status);
-    free(m_forks);
-    return (0);
-}
-
 int         main(int argc, char **argv)
 {
     t_philo_infos   p_infos;
@@ -117,7 +89,10 @@ int         main(int argc, char **argv)
     if (!(p_status = malloc(sizeof(*p_status) * p_infos.nb_philo)))
         return (1);
     if (!(m_forks = malloc(sizeof(*m_forks) * p_infos.nb_philo)))
+    {
+        free(p_status);
         return (1);
+    }
     if ((ret = ft_prepare_infos(&p_infos, p_status, m_forks, &m_write)) != 0)
     {
         free(p_status);
@@ -125,5 +100,5 @@ int         main(int argc, char **argv)
         return (ret);
     }
     ret = ft_create_threads(&p_infos, p_status);
-    return (ft_free_all(p_infos.nb_philo, p_status, m_forks, &m_write));
+    return (ft_free_all(p_status, m_forks, &m_write, ret));
 }

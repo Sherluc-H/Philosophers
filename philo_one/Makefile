@@ -5,7 +5,8 @@ NAME = philo_one
 SRCS = philo_one.c \
 		ft_philo_utils.c \
 		ft_run_threads.c \
-		ft_write_state.c
+		ft_write_state.c \
+		ft_free.c
 OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
