@@ -81,18 +81,18 @@ static int  ft_check_if_end(t_philo_infos *p_infos, t_philo_status *p_status_all
     if (p_infos->nb_philo_finished == p_infos->nb_philo)
     {
         p_infos->end = 1;
-        return 1;
+        return (1);
     }
     else
     {
         if ((current_time = ft_get_current_time()) == -1)
-            return 1;
-        if (current_time - p_status_all[i].eaten_time > p_infos->time_td)
+            return (1);
+        if (current_time - p_status_all[i].eaten_time > p_infos->time_td + 5)
         {
             p_infos->end = 1;
             if ((lenght = ft_get_final_to_write(p_infos, to_write, " died\n", i)) != -1)
                 write(1, to_write, lenght);
-            return 1;
+            return (1);
         }
     }
     return (0);
