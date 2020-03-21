@@ -1,6 +1,8 @@
 #ifndef PHILO_THREE_H
 # define PHILO_THREE_H
 
+# include <semaphore.h>
+# include <pthread.h>
 # include "ft_philo_utils.h"
 
 # define EAT_ENOUGH 3
