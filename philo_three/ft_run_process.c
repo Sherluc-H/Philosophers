@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 23:42:16 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/20 00:01:59 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/10 18:22:01 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,33 +16,30 @@
 #include "ft_write_state.h"
 #include "ft_free.h"
 
-static void	*ft_check_if_died(void *arg)
+static void	ft_check_if_died(t_philo_status *p_status)
 {
-	t_philo_status	*p_status;
 	long			current_time;
 
-	p_status = (t_philo_status*)arg;
 	while (1)
 	{
 		if (p_status->added == 0 && p_status->eat_ok == 1 &&
-			p_status->eat_count == p_status->infos->nb_time_eat)
+				p_status->eat_count == p_status->infos->nb_time_eat)
 		{
 			p_status->infos->end = 1;
-			return (p_status);
+			exit(EAT_ENOUGH);
 		}
 		else
 		{
 			if ((current_time = ft_get_current_time()) == -1)
-				return (p_status);
+				exit(1);
 			if (current_time - p_status->eaten_time >
 				p_status->infos->time_td + 5)
 			{
 				ft_announce_death(p_status);
-				return (p_status);
+				exit(PHILO_DIED);
 			}
 		}
 	}
-	return (p_status);
 }
 
 static int	ft_eat_ok_begin(t_philo_status *p_status)
@@ -113,29 +110,15 @@ static void	*ft_philo_thread(void *arg)
 
 void		ft_run_philo_process(t_philo_status *p_status)
 {
-	sem_t		*forks_sem;
-	sem_t		*write_sem;
 	pthread_t	philo_thread;
-	pthread_t	thread_alive;
 
-	if ((forks_sem = sem_open(FORKS_SEM, 0)) == SEM_FAILED)
+	if ((p_status->forks_sem = sem_open(FORKS_SEM, 0)) == SEM_FAILED)
 		exit(1);
-	if ((write_sem = sem_open(WRITE_SEM, 0)) == SEM_FAILED)
-		exit(1);
-	p_status->forks_sem = forks_sem;
-	p_status->write_sem = write_sem;
-	if ((pthread_create(&(thread_alive), NULL, ft_check_if_died, p_status)))
+	if ((p_status->write_sem = sem_open(WRITE_SEM, 0)) == SEM_FAILED)
 		exit(1);
 	if ((pthread_create(&(philo_thread), NULL, ft_philo_thread, p_status)))
 		exit(1);
 	if ((pthread_detach(philo_thread)))
 		exit(1);
-	if ((pthread_join(thread_alive, NULL)))
-		exit(1);
-	if (p_status->died)
-		exit(PHILO_DIED);
-	else if (p_status->added == 0 && p_status->eat_ok &&
-			p_status->eat_count == p_status->infos->nb_time_eat)
-		exit(EAT_ENOUGH);
-	exit(1);
+	ft_check_if_died(p_status);
 }
