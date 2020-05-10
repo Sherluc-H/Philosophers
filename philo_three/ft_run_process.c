@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 23:42:16 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/10 18:22:01 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/10 23:55:00 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,15 @@ static void	*ft_philo_thread(void *arg)
 	}
 	while (!(p_status->died))
 	{
-		if ((ft_write_state(p_status, " is thinking\n",
-				p_status->write_sem, 0)) == -1)
-			return (p_status);
 		if ((ft_take_forks_n_eat(p_status)) == -1)
 			return (p_status);
 		if ((ft_write_state(p_status, " is sleeping\n",
 				p_status->write_sem, 0)) == -1)
 			return (p_status);
 		if ((usleep(1000 * p_status->infos->time_ts)) == -1)
+			return (p_status);
+		if ((ft_write_state(p_status, " is thinking\n",
+				p_status->write_sem, 0)) == -1)
 			return (p_status);
 	}
 	return (p_status);

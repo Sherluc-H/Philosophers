@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 21:08:38 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 21:23:29 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/10 23:49:35 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,14 @@ void		*ft_philo_thread(void *arg)
 	pick_two = p_status->philo_num % 2 == 0 ? r_fork_num : l_fork_num;
 	while (!(p_status->infos->end))
 	{
-		if ((ft_write_state(p_status, " is thinking\n", 0)) == -1)
-			return (p_status);
 		if ((ft_take_forks_n_eat(p_status, &(p_status->m_forks[pick_one]),
 				&(p_status->m_forks[pick_two]))) == -1)
 			return (p_status);
 		if ((ft_write_state(p_status, " is sleeping\n", 0)) == -1)
 			return (p_status);
 		if ((usleep(1000 * p_status->infos->time_ts)) == -1)
+			return (p_status);
+		if ((ft_write_state(p_status, " is thinking\n", 0)) == -1)
 			return (p_status);
 	}
 	return (p_status);
