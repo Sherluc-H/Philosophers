@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 21:31:26 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 21:35:43 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/18 14:50:50 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,13 @@ int	ft_write_state(t_philo_status *p_status, char *str_end, int lenght)
 		pthread_mutex_unlock(p_status->m_write);
 		return (-1);
 	}
-	if (!(p_status->infos->end))
+	if ((p_status->infos->end) || ((write(1, to_write, lenght)) == -1))
 	{
-		if ((write(1, to_write, lenght)) == -1)
-		{
-			pthread_mutex_unlock(p_status->m_write);
-			return (-1);
-		}
+		pthread_mutex_unlock(p_status->m_write);
+		return (-1);
 	}
+	if (p_status->infos->nb_philo_finished == p_status->infos->nb_philo)
+		p_status->infos->end = 1;
 	if ((pthread_mutex_unlock(p_status->m_write)))
 		return (-1);
 	if (p_status->infos->end)

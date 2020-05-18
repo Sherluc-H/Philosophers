@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 20:43:09 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 20:55:14 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/18 14:48:53 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,24 +59,24 @@ static int	ft_prepare_infos(t_philo_infos *p_infos, t_philo_status *p_status,
 	return (0);
 }
 
-static int	ft_create_threads(t_philo_infos *p_infos, t_philo_status *p_status)
+static int	ft_create_threads(t_philo_infos *p_infos,
+	t_philo_status *p_status, int ret)
 {
 	pthread_t	end_thread;
 	int			i;
-	int			ret;
 
 	i = 0;
-	ret = 0;
 	while (i < p_infos->nb_philo)
 	{
 		if ((ret = pthread_create(&(p_status[i].thread), NULL, ft_philo_thread,
 				&(p_status[i]))) != 0)
 			return (ret);
+		usleep(1);
 		i++;
 	}
 	if ((ret = pthread_create(&end_thread, NULL, ft_end_thread, p_status)) != 0)
 		return (ret);
-	if ((ret = pthread_detach(end_thread)) != 0)
+	if ((ret = pthread_join(end_thread, NULL)) != 0)
 		return (ret);
 	i = 0;
 	while (i < p_infos->nb_philo)
@@ -112,6 +112,6 @@ int			main(int argc, char **argv)
 		free(m_forks);
 		return (ret);
 	}
-	ret = ft_create_threads(&p_infos, p_status);
+	ret = ft_create_threads(&p_infos, p_status, 0);
 	return (ft_free_all(p_status, m_forks, &m_write, ret));
 }

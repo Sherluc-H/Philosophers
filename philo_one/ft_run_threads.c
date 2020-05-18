@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 21:08:38 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/10 23:49:35 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/18 15:02:17 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ static int	ft_philo_eats(t_philo_status *p_status,
 {
 	if ((p_status->eaten_time = ft_get_current_time()) == -1)
 		return (ft_unlock_mutex(fork_one, fork_two, -1));
-	if ((ft_write_state(p_status, " is eating\n", 0)) == -1)
-		return (ft_unlock_mutex(fork_one, fork_two, -1));
 	p_status->eat_count = p_status->eat_count + 1;
 	if (p_status->infos->nb_time_eat > 0 && !p_status->eat_ok &&
 		p_status->eat_count == p_status->infos->nb_time_eat)
@@ -31,6 +29,8 @@ static int	ft_philo_eats(t_philo_status *p_status,
 		p_status->infos->nb_philo_finished =
 			p_status->infos->nb_philo_finished + 1;
 	}
+	if ((ft_write_state(p_status, " is eating\n", 0)) == -1)
+		return (ft_unlock_mutex(fork_one, fork_two, -1));
 	if ((usleep(1000 * p_status->infos->time_te)) == -1)
 		return (ft_unlock_mutex(fork_one, fork_two, -1));
 	if ((pthread_mutex_unlock(fork_one)))
@@ -40,19 +40,32 @@ static int	ft_philo_eats(t_philo_status *p_status,
 	return (0);
 }
 
-static int	ft_take_forks_n_eat(t_philo_status *p_status,
+static int	ft_do_all_state(t_philo_status *p_status,
 	pthread_mutex_t *fork_one, pthread_mutex_t *fork_two)
 {
 	if ((pthread_mutex_lock(fork_one)))
 		return (-1);
-	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
+	if (p_status->infos->nb_philo == 1)
+	{
+		ft_write_state(p_status, " has taken a fork\n", 0);
 		return (ft_unlock_mutex(fork_one, NULL, -1));
+	}
 	if ((pthread_mutex_lock(fork_two)))
 		return (ft_unlock_mutex(fork_one, NULL, -1));
 	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
 		return (ft_unlock_mutex(fork_one, fork_two, -1));
+	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
+		return (ft_unlock_mutex(fork_one, fork_two, -1));
 	if ((ft_philo_eats(p_status, fork_one, fork_two)) == -1)
 		return (-1);
+	if ((ft_write_state(p_status, " is sleeping\n", 0)) == -1)
+		return (-1);
+	if ((usleep(1000 * p_status->infos->time_ts)) == -1)
+		return (-1);
+	if ((ft_write_state(p_status, " is thinking\n", 0)) == -1)
+		return (-1);
+	if (p_status->infos->nb_philo % 2 == 1)
+		usleep(1000);
 	return (0);
 }
 
@@ -68,18 +81,17 @@ void		*ft_philo_thread(void *arg)
 	l_fork_num = p_status->philo_num == 0 ?
 		p_status->infos->nb_philo - 1 : p_status->philo_num - 1;
 	r_fork_num = p_status->philo_num;
-	pick_one = p_status->philo_num % 2 == 0 ? l_fork_num : r_fork_num;
-	pick_two = p_status->philo_num % 2 == 0 ? r_fork_num : l_fork_num;
+	pick_one = l_fork_num;
+	pick_two = r_fork_num;
+	if (p_status->infos->nb_philo % 2 == 0)
+	{
+		pick_one = p_status->philo_num % 2 == 0 ? l_fork_num : r_fork_num;
+		pick_two = p_status->philo_num % 2 == 0 ? r_fork_num : l_fork_num;
+	}
 	while (!(p_status->infos->end))
 	{
-		if ((ft_take_forks_n_eat(p_status, &(p_status->m_forks[pick_one]),
+		if ((ft_do_all_state(p_status, &(p_status->m_forks[pick_one]),
 				&(p_status->m_forks[pick_two]))) == -1)
-			return (p_status);
-		if ((ft_write_state(p_status, " is sleeping\n", 0)) == -1)
-			return (p_status);
-		if ((usleep(1000 * p_status->infos->time_ts)) == -1)
-			return (p_status);
-		if ((ft_write_state(p_status, " is thinking\n", 0)) == -1)
 			return (p_status);
 	}
 	return (p_status);
