@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 23:07:41 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 23:12:02 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/18 17:14:04 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,13 @@ int	ft_write_state(t_philo_status *p_status, char *end_str, int lenght)
 		sem_post(p_status->write_sem);
 		return (-1);
 	}
-	if (!(p_status->infos->end))
+	if ((p_status->infos->end) || ((write(1, to_write, lenght)) == -1))
 	{
-		if ((write(1, to_write, lenght)) == -1)
-		{
-			sem_post(p_status->write_sem);
-			return (-1);
-		}
+		sem_post(p_status->write_sem);
+		return (-1);
 	}
+	if (p_status->infos->nb_philo == p_status->infos->nb_philo_finished)
+		p_status->infos->end = 1;
 	if ((sem_post(p_status->write_sem)) == -1)
 		return (-1);
 	if (p_status->infos->end)

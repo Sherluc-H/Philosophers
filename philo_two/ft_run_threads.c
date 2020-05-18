@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 22:29:08 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/10 23:52:36 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/18 18:37:20 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,9 @@
 #include "ft_write_state.h"
 #include "ft_free.h"
 
-static int	ft_take_forks_n_eat(t_philo_status *p_status)
+static int	ft_philo_eats(t_philo_status *p_status)
 {
-	if ((sem_wait(p_status->forks_sem)) == -1)
-		return (-1);
-	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
-		return (ft_unlock_sem(p_status->forks_sem, NULL, -1));
-	if ((sem_wait(p_status->forks_sem)) == -1)
-		return (ft_unlock_sem(p_status->forks_sem, NULL, -1));
-	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
-		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
 	if ((p_status->eaten_time = ft_get_current_time()) == -1)
-		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
-	if ((ft_write_state(p_status, " is eating\n", 0)) == -1)
 		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
 	p_status->eat_count = p_status->eat_count + 1;
 	if (p_status->infos->nb_time_eat > 0 && !(p_status->eat_ok) &&
@@ -38,8 +28,34 @@ static int	ft_take_forks_n_eat(t_philo_status *p_status)
 		p_status->infos->nb_philo_finished =
 			p_status->infos->nb_philo_finished + 1;
 	}
+	if ((ft_write_state(p_status, " is eating\n", 0)) == -1)
+		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
 	if ((usleep(1000 * p_status->infos->time_te)) == -1)
 		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
+	return (0);
+}
+
+static int	ft_take_forks_n_eat(t_philo_status *p_status)
+{
+	if ((sem_wait(p_status->take_sem)) == -1)
+		return (-1);
+	if ((sem_wait(p_status->forks_sem)) == -1)
+		return (ft_unlock_sem(p_status->take_sem, NULL, -1));
+	if (p_status->infos->nb_philo == 1)
+	{
+		ft_write_state(p_status, " has taken a fork\n", 0);
+		return (ft_unlock_sem(p_status->forks_sem, p_status->take_sem, -1));
+	}
+	if ((sem_wait(p_status->forks_sem)) == -1)
+		return (ft_unlock_sem(p_status->forks_sem, p_status->take_sem, -1));
+	if ((sem_post(p_status->take_sem)) == -1)
+		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
+	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
+		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
+	if ((ft_write_state(p_status, " has taken a fork\n", 0)) == -1)
+		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
+	if ((ft_philo_eats(p_status)) == -1)
+		return (-1);
 	return (0);
 }
 
