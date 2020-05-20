@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 23:40:40 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 23:40:55 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 14:04:55 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "philo_three.h"
 
 int	ft_unlock_sem(sem_t *sem_one, sem_t *sem_two, int ret);
-int	ft_unlink_n_close_sem(sem_t *forks_sem, sem_t *write_sem, int ret);
+int	ft_unlink_n_close_sem(sem_t *forks_sem, sem_t *write_sem,
+	sem_t *take_sem, int ret);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 23:36:15 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/19 23:37:38 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 15:44:09 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@
 # define PHILO_DIED 4
 # define FORKS_SEM "/forks_sem"
 # define WRITE_SEM "/write_sem"
+# define TAKE_SEM "/take_sem"
+
+typedef struct		s_all_sem
+{
+	sem_t		*forks_sem;
+	sem_t		*write_sem;
+	sem_t		*take_sem;
+}					t_all_sem;
 
 typedef struct		s_philo_status
 {
@@ -34,6 +42,7 @@ typedef struct		s_philo_status
 	t_philo_infos	*infos;
 	sem_t			*forks_sem;
 	sem_t			*write_sem;
+	sem_t			*take_sem;
 	pid_t			pid;
 	pthread_t		wait_thread;
 }					t_philo_status;

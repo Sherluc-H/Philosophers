@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/20 00:31:23 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/20 00:36:38 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 15:19:06 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,12 @@ static int	ft_dont_unlock_if_eat_ok(t_philo_status *p_status, int is_eating)
 		if (p_status->infos->nb_time_eat > 0 && !(p_status->eat_ok) &&
 			p_status->eat_count == p_status->infos->nb_time_eat)
 		{
+			sem_post(p_status->write_sem);
+			usleep(1000 * p_status->infos->time_te);
+			sem_post(p_status->forks_sem);
+			sem_post(p_status->forks_sem);
 			p_status->eat_ok = 1;
-			return (-1);
+			return (-2);
 		}
 	}
 	return (0);
@@ -64,8 +68,8 @@ int			ft_write_state(t_philo_status *p_status, char *str_end,
 	if (!(p_status->died))
 		if ((write(1, to_write, lenght)) == -1)
 			return (ft_unlock_sem(write_sem, NULL, -1));
-	if (ft_dont_unlock_if_eat_ok(p_status, is_eating) == -1)
-		return (-1);
+	if (ft_dont_unlock_if_eat_ok(p_status, is_eating) == -2)
+		return (-2);
 	if (p_status->died)
 		return (ft_unlock_sem(write_sem, NULL, -1));
 	if ((sem_post(write_sem)) == -1)

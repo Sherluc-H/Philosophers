@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/20 00:02:18 by lhuang            #+#    #+#             */
-/*   Updated: 2020/04/20 00:02:32 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 16:36:26 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "philo_three.h"
 
-void	ft_run_philo_process(t_philo_status *p_status);
+void	ft_run_philo_process(t_philo_status *p_status,
+	t_philo_status *p_status_all);
 
 #endif
