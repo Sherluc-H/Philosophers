@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 21:08:38 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/18 15:02:17 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 19:13:06 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static int	ft_philo_eats(t_philo_status *p_status,
 	if ((pthread_mutex_unlock(fork_one)))
 		return (ft_unlock_mutex(fork_two, NULL, -1));
 	if ((pthread_mutex_unlock(fork_two)))
+		return (-1);
+	if (p_status->eat_ok)
 		return (-1);
 	return (0);
 }

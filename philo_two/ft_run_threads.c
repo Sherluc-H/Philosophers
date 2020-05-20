@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 22:29:08 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/18 18:37:20 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/20 19:16:43 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void		*ft_philo_thread(void *arg)
 		if ((sem_post(p_status->forks_sem)) == -1)
 			return (p_status);
 		if ((sem_post(p_status->forks_sem)) == -1)
+			return (p_status);
+		if (p_status->eat_ok)
 			return (p_status);
 		if ((ft_write_state(p_status, " is sleeping\n", 0)) == -1)
 			return (p_status);
