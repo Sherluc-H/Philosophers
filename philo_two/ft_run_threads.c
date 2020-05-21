@@ -6,7 +6,7 @@
 /*   By: lhuang <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/19 22:29:08 by lhuang            #+#    #+#             */
-/*   Updated: 2020/05/20 19:16:43 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/05/21 10:57:48 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ static int	ft_philo_eats(t_philo_status *p_status)
 		p_status->eat_count == p_status->infos->nb_time_eat)
 	{
 		p_status->eat_ok = 1;
-		p_status->infos->nb_philo_finished =
-			p_status->infos->nb_philo_finished + 1;
 	}
 	if ((ft_write_state(p_status, " is eating\n", 0)) == -1)
 		return (ft_unlock_sem(p_status->forks_sem, p_status->forks_sem, -1));
@@ -73,7 +71,11 @@ void		*ft_philo_thread(void *arg)
 		if ((sem_post(p_status->forks_sem)) == -1)
 			return (p_status);
 		if (p_status->eat_ok)
+		{
+			p_status->infos->nb_philo_finished =
+				p_status->infos->nb_philo_finished + 1;
 			return (p_status);
+		}
 		if ((ft_write_state(p_status, " is sleeping\n", 0)) == -1)
 			return (p_status);
 		if ((usleep(1000 * p_status->infos->time_ts)) == -1)
@@ -100,7 +102,8 @@ static int	ft_check_if_end(t_philo_infos *p_infos,
 	{
 		if ((current_time = ft_get_current_time()) == -1)
 			return (1);
-		if (current_time - p_status_all[i].eaten_time > p_infos->time_td + 5)
+		if (!(p_status_all[i].eat_ok) &&
+			current_time - p_status_all[i].eaten_time > p_infos->time_td + 5)
 		{
 			p_infos->end = 1;
 			if ((lenght = ft_get_final_to_write(p_infos,
